@@ -5,8 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:musicvisualizerWPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Music Visualizer" Height="450" Width="800">
     <Grid>
+        <StackPanel HorizontalAlignment="Center">
+            <Label Content="Music Visualizer"/>
+        </StackPanel>
+
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Label Content="Upload a music file"/>
+            <Button x:Name="MusicFile" Content="Music File" Click="UploadMusicFile"/>
+        </StackPanel>
         
     </Grid>
 </Window>
