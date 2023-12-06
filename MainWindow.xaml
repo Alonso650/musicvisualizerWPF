@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:musicvisualizerWPF"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
         Title="Music Visualizer" Height="450" Width="800">
     <Grid>
@@ -11,10 +11,32 @@
             <Label Content="Music Visualizer"/>
         </StackPanel>
 
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Label Content="Upload a music file"/>
-            <Button x:Name="MusicFile" Content="Music File" Click="UploadMusicFile"/>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="fileUploadPanel">
+            <Label Content="Please upload a music file"/>
+            <Button x:Name="MusicFile" Content="Click to upload file" Click="UploadMusicFile"/>
         </StackPanel>
+
+        <!-- The Wrap Panel will allow items to organize in a row -->
+        <WrapPanel x:Name="musicPlayerPanel"  Margin="20" HorizontalAlignment="Center" VerticalAlignment="Bottom" Background="Aqua">
+            <!-- Play Button -->
+            <Button Command="{Binding StartPlaybackCommand}">
+                <Image Source="/images/PlayButton.png" Width="50" Margin="10"/>
+
+            </Button>
+
+            <!-- Pause Button -->
+            <Button Command="{Binding PauseCommand}">
+                <Image Source="/images/PauseButton.png" Width="50" Margin="10"/>
+            </Button>
+
+            <!-- Stop Button -->
+            <Button Command="{Binding StopPlaybackCommand}">
+                <Image Source ="/images/StopButton.png" Width="50" Margin="10"/>
+            </Button>
+        </WrapPanel>
         
+        <!--Include a button to go back to upload file and hide player for temporary time-->
+
+
     </Grid>
 </Window>

@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
+using System.Windows.Interactivity;
 
 namespace musicvisualizerWPF
 {
@@ -30,34 +31,48 @@ namespace musicvisualizerWPF
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             
-            //openFileDialog.Filter = "Audio Files |*.mp3;*.wav|All files (*.*)|*.*";
-
             if(openFileDialog.ShowDialog() == true)
             {
-                // User selected a music file 
-                string selectedFileName = openFileDialog.FileName;
+                // User selected a music file and only retrieving the file name
+                string selectedFileName = System.IO.Path.GetFileName(openFileDialog.FileName);
 
                 // Checking if selectedFileName is a music file
-                string fileExtension = System.IO.Path.GetExtension(openFileDialog.FileName);
+                string fileExtension = System.IO.Path.GetExtension(selectedFileName);
                 if(fileExtension.Equals(".mp3", StringComparison.OrdinalIgnoreCase) ||
                    fileExtension.Equals(".wav", StringComparison.OrdinalIgnoreCase))
                 {
+
                     // Can perform operations with the file user selected
-                    MusicFile.Content = selectedFileName;
+                    MusicFile.Content = "Play Song";
+                    fileUploadPanel.Visibility = Visibility.Collapsed;
+                    musicPlayerPanel.Visibility = Visibility.Visible; 
                 }
                 else
                 {
                     // Displaying the error message for invalid file type
                     MessageBox.Show("Please select a valid music file (mp3 or wav)", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-
-                
+                } 
             }
             else
             {
                 // User canceled the file selection
                 MessageBox.Show("Please select a music file.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void PlayClick(object sender, MouseButtonEventArgs e)
+        {
+            
+        }
+
+        private void PauseClick(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void StopClick(object sender, MouseButtonEventArgs e)
+        {
+
         }
     }
 }
