@@ -1,5 +1,6 @@
 ﻿using musicvisualizerWPF.Models;
 using musicvisualizerWPF.Services;
+using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Navigation;
 
@@ -19,6 +21,9 @@ namespace musicvisualizerWPF.ViewModel
         private double _currentTrackPosition;
         private string _playPauseImageSource;
         private float _currentVolume;
+
+        private Track _currentlySelectedTrack;
+        private Track _currentlyPlayingTrack;
 
         private AudioPlayer _audioPlayer;
 
@@ -55,7 +60,7 @@ namespace musicvisualizerWPF.ViewModel
             get { return _currentTrackLength; }
             set
             {
-                if(value.Equals(_currentTrackLength)) return;
+                if (value.Equals(_currentTrackLength)) return;
                 _currentTrackLength = value;
                 OnPropertyChanged(nameof(_currentTrackLength));
             }
@@ -66,34 +71,73 @@ namespace musicvisualizerWPF.ViewModel
             get { return _currentTrackPosition; }
             set
             {
-                if(value.Equals(_currentTrackPosition)) return;
+                if (value.Equals(_currentTrackPosition)) return;
                 _currentTrackPosition = value;
                 OnPropertyChanged(nameof(_currentTrackPosition));
             }
         }
+
+        public Track CurrentlySelectedTrack
+        {
+            get { return _currentlySelectedTrack; }
+            set
+            {
+                if (Equals(value, CurrentlySelectedTrack)) return;
+                _currentlySelectedTrack = value;
+                OnPropertyChanged(nameof(CurrentlySelectedTrack));
+            }
+        }
+
+        public Track CurrentlyPlayingTrack
+        {
+            get { return _currentlyPlayingTrack; }
+            set
+            {
+                if (Equals(value, _currentlyPlayingTrack)) return;
+                _currentlyPlayingTrack = value;
+                OnPropertyChanged(nameof(CurrentlyPlayingTrack));
+            }
+        }
+
+        private enum PlaybackState
+        {
+            Playing, Stopped, Paused
+        }
+
+        private PlaybackState _playbackState;
 
         public ICommand RewindToStartCommand { get; set; }
         public ICommand StartPlaybackCommand { get; set; }
         public ICommand StopPlaybackCommand { get; set; }
         public ICommand ForwardToEndCommand { get; set; }
 
-        public ICommand TrackControlMouseDownCommand {  get; set; }
+        public ICommand TrackControlMouseDownCommand { get; set; }
         public ICommand TrackControlMouseUpCommand { get; set; }
         public ICommand VolumeControlValueChangedCommand { get; set; }
 
         // Audio Player Commands
         private void RewindToStart(object p)
         {
-
+            // Set the position to the beginning of the track
+            _audioPlayer.SetPosition(0);
         }
         private bool CanRewindToStart(object p)
         {
-            return true;
+            if (_playbackState == PlaybackState.Playing)
+            {
+                return true;
+
+            }
+            return false;
         }
 
         private void StartPlayback(object p)
         {
+            if (_playbackState == PlaybackState.Stopped)
+            {
+                _audioPlayer = new AudioPlayer(CurrentlySelectedTrack.FilePath, CurrentVolume);
 
+            }
         }
 
         private bool CanStartPlayback(object p)
@@ -103,48 +147,83 @@ namespace musicvisualizerWPF.ViewModel
 
         private void StopPlayback(object p)
         {
-
+            if (_audioPlayer != null)
+            {
+                _audioPlayer.PlaybackStopType = AudioPlayer.PlaybackStopTypes.PlaybackStoppedByUser;
+                _audioPlayer.Stop();
+            }
         }
 
         private bool CanStopPlayBack(object p)
         {
-            return true;
+            if (_playbackState == PlaybackState.Playing || _playbackState == PlaybackState.Paused)
+            {
+                return true;
+            }
+            return false;
         }
 
         private void ForwardToEnd(object p)
         {
-
+            if(_audioPlayer != null)
+            {
+                _audioPlayer.PlaybackStopType = AudioPlayer.PlaybackStopTypes.PlaybackStoppedReachingEndOfFile;
+                _audioPlayer.SetPosition(_audioPlayer.GetLengthInSeconds());
+            }
         }
 
         private bool CanForwardToEnd(object p)
         {
-            return true;
+            if(_playbackState == PlaybackState.Playing)
+            {
+                return true;
+            }
+            return false;
         }
 
         // Event Commands
         private void TrackControlMouseDown(object p)
         {
-
+            if(_audioPlayer != null)
+            {
+                _audioPlayer.Pause();
+            } 
         }
 
         private bool CanTrackControlMouseDown(object p)
         {
-            return true;
+            if(_playbackState == PlaybackState.Playing)
+            {
+                return true;
+            }
+            return false;
         }
 
         private void TrackControlMouseUp(object p)
         {
-
+            if(_audioPlayer != null)
+            {
+                _audioPlayer.SetPosition(CurrentTrackPosition);
+                _audioPlayer.Play(NAudio.Wave.PlaybackState.Paused, CurrentVolume);
+            }
         }
 
         private bool CanTrackControlMouseUp(object p)
         {
-            return true;
+            if(_playbackState == PlaybackState.Paused)
+            {
+                return true;
+            }
+            return false;
         }
 
+        // Set the value of the slider to current volume
         private void VolumeControlValueChanged(object p)
         {
-
+            if(_audioPlayer != null)
+            {
+                _audioPlayer.SetVolume(CurrentVolume);
+            }
         }
 
         private bool CanVolumeControlValueChanged(object p)
