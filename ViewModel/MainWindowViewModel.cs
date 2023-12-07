@@ -136,13 +136,25 @@ namespace musicvisualizerWPF.ViewModel
             if (_playbackState == PlaybackState.Stopped)
             {
                 _audioPlayer = new AudioPlayer(CurrentlySelectedTrack.FilePath, CurrentVolume);
+                _audioPlayer.PlaybackStopType = AudioPlayer.PlaybackStopTypes.PlaybackStoppedReachingEndOfFile;
+                _audioPlayer.PlaybackPaused += _audioPlayer_PlaybackPaused;
+                _audioPlayer.PlaybackResumed += _audioPlayer_PlaybackResumed;
+                _audioPlayer.PlaybackStopped += _audioPlayer_PlaybackStopped;
+                CurrentTrackLength = _audioPlayer.GetLengthInSeconds();
+
+                _audioPlayer.TogglePlayPause(CurrentVolume);
 
             }
         }
 
+
         private bool CanStartPlayback(object p)
         {
-            return true;
+            if(CurrentlySelectedTrack != null)
+            {
+                return true;
+            }
+            return false;
         }
 
         private void StopPlayback(object p)
@@ -243,6 +255,35 @@ namespace musicvisualizerWPF.ViewModel
             TrackControlMouseDownCommand = new RelayCommand(TrackControlMouseDown, CanTrackControlMouseDown);
             TrackControlMouseUpCommand = new RelayCommand(TrackControlMouseUp, CanTrackControlMouseUp);
             VolumeControlValueChangedCommand = new RelayCommand(VolumeControlValueChanged, CanVolumeControlValueChanged);
+        }
+
+        private void _audioPlayer_PlaybackStopped()
+        {
+            _playbackState = PlaybackState.Stopped;
+            PlayPauseImageSource = "../images/PlayButton.png";
+            CommandManager.InvalidateRequerySuggested();
+            CurrentTrackPosition = 0;
+
+            if (_audioPlayer.PlaybackStopType == AudioPlayer.PlaybackStopTypes.PlaybackStoppedReachingEndOfFile)
+            {
+                StartPlayback(null);
+            }
+        }
+
+        // These two methods with the audioplayer will
+        // change the image of button from pause to play and
+        // vice versa 
+        private void _audioPlayer_PlaybackResumed()
+        {
+            _playbackState = PlaybackState.Playing;
+            PlayPauseImageSource = "../images/PauseButton.png";
+        }
+
+        private void _audioPlayer_PlaybackPaused()
+        {
+            _playbackState = PlaybackState.Paused;
+            _playPauseImageSource = "../images/PlayButton.png";
+
         }
 
         // This is in a way like the main() where the commands

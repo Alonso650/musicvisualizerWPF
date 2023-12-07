@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using static musicvisualizerWPF.AudioPlayer;
 
 namespace musicvisualizerWPF
@@ -24,6 +25,7 @@ namespace musicvisualizerWPF
         private DirectSoundOut _output;
 
         private string _filepath;
+        private PlaybackState _playbackState;
 
         // This event is triggered when audio playback resumes. It uses
         // the 'Action' delegate, indicating that subscribers to this event
@@ -195,6 +197,8 @@ namespace musicvisualizerWPF
                 _audioFileReader.Volume = value;
             }
         }
+
+        
     }
 
     

@@ -139,10 +139,16 @@
     <Resource Include="images\StopButton.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Views\" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="images\PauseButton.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Views\" />
+    <Resource Include="images\FastForwardButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\RewindButton.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
