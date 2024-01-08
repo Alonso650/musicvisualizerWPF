@@ -27,6 +27,7 @@ namespace musicvisualizerWPF
             InitializeComponent();
         }
 
+        /*
         private void UploadMusicFile(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -70,9 +71,11 @@ namespace musicvisualizerWPF
 
         }
 
+        
         private void StopClick(object sender, MouseButtonEventArgs e)
         {
 
         }
+        */
     }
 }
